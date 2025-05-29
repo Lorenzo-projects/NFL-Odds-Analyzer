@@ -697,181 +697,85 @@ h2 {
 
 @media (max-width: 600px) {
     body {
-        font-size: 15px;
+        font-size: 14px;
     }
     .glass-nav {
         flex-direction: column;
         align-items: stretch;
-        gap: 0.7rem;
-        padding: 1rem 0.5rem;
+        padding: 0.5rem;
+        max-height: 20vh; /* Limita l'altezza dell'header */
+        overflow-y: auto; /* Permette lo scroll se necessario */
     }
     .logo {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         justify-content: center;
-        width: 100%;
+        padding: 0.3rem 0;
     }
     nav {
-        width: 100%;
-        gap: 0.3rem;
+        display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0;
     }
     .nav-btn {
-        width: 100%;
-        margin-bottom: 0.3rem;
-        font-size: 1rem;
-        padding: 0.7rem 0.5rem;
-        min-width: 0;
-        box-sizing: border-box;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+        flex: 1;
+        min-width: calc(50% - 0.3rem); /* 2 bottoni per riga */
+        text-align: center;
+        white-space: nowrap;
     }
     #language-select {
-        margin-left: 0;
-        width: 100%;
-        margin-top: 0.5rem;
-        font-size: 1rem;
-    }
-    .glass-panel {
-        padding: 1rem 0.5rem;
-    }
-    .event-grid {
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
-    }
-    .event-card {
-        min-width: 0;
-        border-radius: 0.7rem;
-        padding: 0;
-    }
-    .event-header {
-        padding: 1rem 0.7rem 0.5rem 0.7rem;
-        gap: 0.1em;
-    }
-    .event-header .event-teams {
-        gap: 0.05em;
-    }
-    .team-row {
-        font-size: 1em;
-        min-height: 1.4em;
-    }
-    .vs-row {
-        font-size: 0.95em;
-        margin: 0.05em 0 0.05em 0;
-    }
-    .event-time {
+        margin: 0.3rem 0;
+        padding: 0.4rem;
         font-size: 0.9rem;
-        margin-top: 0.2em;
+        width: auto;
+        align-self: center;
     }
-    .odds-analysis {
-        padding: 0.7rem;
-        gap: 0.4rem;
+    
+    /* Aggiusta il contenuto principale */
+    main {
+        padding-top: 0.5rem;
+        height: 80vh; /* Usa il resto dello spazio disponibile */
+        overflow-y: auto;
     }
-    .outcome-analysis {
-        padding: 0.7rem 0.7rem;
+    
+    /* Riduce i margini e i padding delle cards */
+    .glass-panel {
         margin: 0.5rem 0;
-        font-size: 0.97rem;
-        gap: 0.3rem;
+        padding: 0.8rem;
     }
-    .stats {
-        grid-template-columns: 1fr;
-        gap: 0.4rem;
-        font-size: 0.95rem;
+    
+    .event-card {
+        margin-bottom: 0.8rem;
     }
-    .stats div {
-        padding: 0.35rem 0.6rem;
+    
+    /* Riduce le dimensioni dei titoli */
+    h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.3rem;
     }
-    .recommendation-item {
-        padding: 1rem 0.7rem;
-        font-size: 0.97rem;
-    }
-    .recommendation-details {
-        font-size: 0.95rem;
-    }
-    .info-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .info-item {
-        padding: 1rem;
-    }
-    .filters {
-        flex-direction: column;
-        gap: 0.7rem;
-    }
-    .filters select {
-        width: 100%;
-        font-size: 1rem;
-        padding: 0.7rem 1rem 0.7rem 1rem;
-    }
-    .odds-table {
-        font-size: 0.97rem;
-        border-radius: 0.5rem;
-    }
-    .odds-table th, .odds-table td {
-        padding: 0.6rem 0.5rem;
-    }
-    .no-data-message {
-        padding: 2rem 0.5rem;
-        font-size: 1rem;
-    }
-    .message {
-        top: 10px;
-        right: 10px;
-        padding: 0.7rem 1.2rem;
-        font-size: 0.97rem;
+    
+    /* Ottimizza il layout della griglia degli eventi */
+    .event-grid {
+        gap: 0.8rem;
     }
 }
 
-/* Tabella scrollabile su mobile */
-@media (max-width: 600px) {
-    .odds-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-        border-radius: 0.5rem;
+/* Aggiunge un breakpoint specifico per schermi molto piccoli */
+@media (max-width: 360px) {
+    .glass-nav {
+        padding: 0.3rem;
     }
-    .odds-table table, .odds-table thead, .odds-table tbody, .odds-table tr, .odds-table th, .odds-table td {
-        display: block;
+    .nav-btn {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
     }
-    .odds-table thead {
-        display: none;
-    }
-    .odds-table tr {
-        margin-bottom: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 4px rgba(16,19,26,0.10);
-        background: var(--card-bg);
-    }
-    .odds-table td {
-        padding: 0.5rem 0.7rem;
-        border: none;
-        border-bottom: 1px solid var(--glass-border);
-        position: relative;
-        text-align: left;
-    }
-    .odds-table td:before {
-        content: attr(data-label);
-        font-weight: 700;
-        color: var(--accent-green);
-        display: block;
-        margin-bottom: 0.2em;
-        font-size: 0.93em;
-    }
-    .odds-table tr:last-child td {
-        border-bottom: none;
-    }
-}
-
-/* Riduci dimensione titoli principali su desktop */
-@media (min-width: 601px) {
     .logo {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
     }
     h2 {
-        font-size: 1.3rem;
-        margin-bottom: 1.2rem;
-        padding-bottom: 0.4rem;
-    }
-    .info-item h3 {
-        font-size: 0.92rem;
+        font-size: 1.1rem;
     }
 }
