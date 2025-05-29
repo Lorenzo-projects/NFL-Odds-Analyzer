@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Odds Analyzer</title>
+    <!-- Aggiunto base href per GitHub Pages -->
+    <base href="./">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body>
+    <header class="glass-nav">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1 data-translate="NFL Odds Analyzer">NFL Odds Analyzer</h1>
+        </div>
+        <nav>
+            <button class="nav-btn active" data-section="dashboard" data-translate="Featured Events">Featured Events</button>
+            <button class="nav-btn" data-section="analysis" data-translate="Odds Analysis">Odds Analysis</button>
+            <button class="nav-btn" data-section="insights" data-translate="Insights">Insights</button>
+            <button class="nav-btn" data-section="info" data-translate="Understanding the Stats">Understanding the Stats</button>
+        </nav>
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="it">Italiano</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </header>
+
+    <main>
+        <section id="dashboard" class="glass-panel">
+            <h2 data-translate="Featured Events">Featured Events</h2>
+            <div id="event-cards" class="event-grid"></div>
+        </section>
+
+        <section id="analysis" class="glass-panel hidden">
+            <h2 data-translate="Odds Analysis">Odds Analysis</h2>
+            <div class="filters">
+                <select id="timeFilter">
+                    <option data-translate="Today" value="today">Today</option>
+                    <option data-translate="Tomorrow" value="tomorrow">Tomorrow</option>
+                    <option data-translate="Weekend" value="weekend">Weekend</option>
+                    <option data-translate="This Week" value="week">This Week</option>
+                </select>
+                <select id="probabilityFilter">
+                    <option data-translate="All Probabilities" value="all">All Probabilities</option>
+                    <option data-translate="High (>70%)" value="high">High (>70%)</option>
+                    <option data-translate="Medium (50-70%)" value="medium">Medium (50-70%)</option>
+                    <option data-translate="Low (<50%)" value="low">Low (<50%)</option>
+                </select>
+            </div>
+            <div id="odds-table"></div>
+        </section>
+
+        <section id="insights" class="glass-panel hidden">
+            <h2 data-translate="Insights">Insights</h2>
+            <div id="recommendations"></div>
+        </section>
+    </main>
+
+    <section id="info" class="glass-panel hidden">
+        <h2 data-translate="Understanding the Stats">Understanding the Stats</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <h3 data-translate="Probability">Probability</h3>
+                <p data-translate="The implied probability of an outcome, based on the average odds from all bookmakers. Higher probability suggests a more likely outcome.">The implied probability of an outcome, based on the average odds from all bookmakers. Higher probability suggests a more likely outcome.</p>
+            </div>
+            <div class="info-item">
+                <h3 data-translate="Average Odds">Average Odds</h3>
+                <p data-translate="The weighted average of the odds for a particular outcome across all available bookmakers. This provides a central estimate of the odds.">The weighted average of the odds for a particular outcome across all available bookmakers. This provides a central estimate of the odds.</p>
+            </div>
+            <div class="info-item">
+                <h3 data-translate="Consensus">Consensus</h3>
+                <p data-translate="A measure of agreement among bookmakers, indicating how closely their odds align. Higher consensus suggests stronger agreement.">A measure of agreement among bookmakers, indicating how closely their odds align. Higher consensus suggests stronger agreement.</p>
+            </div>
+            <div class="info-item">
+                <h3 data-translate="Bookmakers">Bookmakers</h3>
+                <p data-translate="The number of bookmakers offering odds for a particular outcome. A higher number indicates more market interest and potentially more reliable data.">The number of bookmakers offering odds for a particular outcome. A higher number indicates more market interest and potentially more reliable data.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="loading" class="loading-overlay glass-panel hidden">
+        <div class="spinner"></div>
+        <p data-translate="Loading data...">Loading data...</p>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
