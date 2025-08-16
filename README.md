@@ -43,6 +43,6 @@ MIT License
 
 ## Created by:
 
-.lorenzo_. on discord
-llorenzo_exe on Twitch and Instagram
+.lorenzo_. on discord, 
+llorenzo_exe on Twitch and Instagram, 
 Claude.ai (Sonnet 4.0)
