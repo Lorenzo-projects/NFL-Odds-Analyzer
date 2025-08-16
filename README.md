@@ -55,10 +55,11 @@ MIT License
 
 ---
 
-## 👤 Created by
+## Created by
 
 * **Discord:** .lorenzo_.
 * **Instagram:** [llorenzo\_exe](https://www.instagram.com/llorenzo.exe/)
 * **Twitch:** [llorenzo\_exe](https://twitch.tv/llorenzo_exe)
+
 
 
