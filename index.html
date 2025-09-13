@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Odds Analyzer</title>
+    <!-- Aggiunto base href per GitHub Pages -->
+    <base href="./">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body>
+    <header class="glass-nav">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1 data-translate="NFL Odds Analyzer">NFL Odds Analyzer</h1>
+        </div>
+        <nav>
+            <button class="nav-btn active" data-section="dashboard" data-translate="Featured Events">Featured Events</button>
+            <button class="nav-btn" data-section="analysis" data-translate="Odds Analysis">Odds Analysis</button>
+            <button class="nav-btn" data-section="insights" data-translate="Insights">Insights</button>
+            <button class="nav-btn" data-section="trends" data-translate="Market Trends">Market Trends</button>
+            <button class="nav-btn" data-section="arbitrage" data-translate="Arbitrage">Arbitrage</button>
+            <button class="nav-btn" data-section="info" data-translate="Understanding the Stats">Understanding the Stats</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard" class="glass-panel">
+            <div class="dashboard-header">
+                <h2 data-translate="Featured Events">Featured Events</h2>
+                <div class="dashboard-controls">
+                    <div class="quick-stats">
+                        <div class="stat-card" onclick="openStatsModal('events')">
+                            <span class="stat-value" id="total-events">0</span>
+                            <span class="stat-label" data-translate="Active Events">Active Events</span>
+                        </div>
+                        <div class="stat-card" onclick="openStatsModal('odds')">
+                            <span class="stat-value" id="avg-odds">-</span>
+                            <span class="stat-label" data-translate="Avg Market Odds">Avg Market Odds</span>
+                        </div>
+                        <div class="stat-card" onclick="openStatsModal('bets')">
+                            <span class="stat-value" id="high-value-bets">0</span>
+                            <span class="stat-label" data-translate="Value Bets">Value Bets</span>
+                        </div>
+                        <div class="stat-card" onclick="openStatsModal('status')">
+                            <span class="stat-value"><i class="fas fa-info-circle"></i></span>
+                            <span class="stat-label" data-translate="System Status">System Status</span>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <div class="dashboard-actions">
+                        <button id="refresh-data" class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span data-translate="Refresh">Refresh</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="search-filter-bar">
+                <input type="text" id="team-search" placeholder="Search teams..." data-translate-placeholder="Search teams...">
+                <select id="game-time-filter">
+                    <option value="all" data-translate="All Times">All Times</option>
+                    <option value="today" data-translate="Today">Today</option>
+                    <option value="tomorrow" data-translate="Tomorrow">Tomorrow</option>
+                    <option value="week" data-translate="This Week">This Week</option>
+                </select>
+                <select id="odds-sort">
+                    <option value="time" data-translate="Sort by Time">Sort by Time</option>
+                    <option value="probability" data-translate="Sort by Probability">Sort by Probability</option>
+                    <option value="value" data-translate="Sort by Value">Sort by Value</option>
+                </select>
+            </div>
+            <div id="event-cards" class="event-grid"></div>
+        </section>
+
+        <section id="analysis" class="glass-panel hidden">
+            <h2 data-translate="Odds Analysis">Odds Analysis</h2>
+            <div class="analysis-controls">
+                <div class="filters">
+                    <select id="timeFilter">
+                        <option data-translate="Today" value="today">Today</option>
+                        <option data-translate="Tomorrow" value="tomorrow">Tomorrow</option>
+                        <option data-translate="Weekend" value="weekend">Weekend</option>
+                        <option data-translate="This Week" value="week">This Week</option>
+                    </select>
+                    <select id="probabilityFilter">
+                        <option data-translate="All Probabilities" value="all">All Probabilities</option>
+                        <option data-translate="High (>70%)" value="high">High (>70%)</option>
+                        <option data-translate="Medium (50-70%)" value="medium">Medium (50-70%)</option>
+                        <option data-translate="Low (/>50%)" value="low">Low (/>50%)</option>
+                    </select>
+                    <select id="consensus-filter">
+                        <option value="all" data-translate="All Consensus">All Consensus</option>
+                        <option value="high" data-translate="High Consensus">High Consensus</option>
+                        <option value="medium" data-translate="Medium Consensus">Medium Consensus</option>
+                        <option value="low" data-translate="Low Consensus">Low Consensus</option>
+                    </select>
+                </div>
+                <button id="export-analysis" class="export-btn">
+                    <i class="fas fa-download"></i>
+                    <span data-translate="Export CSV">Export CSV</span>
+                </button>
+            </div>
+            <div id="odds-table"></div>
+        </section>
+
+        <section id="insights" class="glass-panel hidden">
+            <div class="section-header">
+                <h2 data-translate="NFL Insights & Analytics">NFL Insights & Analytics</h2>
+                <div class="section-controls">
+                    <button id="refresh-insights" class="action-btn secondary">
+                        <i class="fas fa-sync-alt"></i>
+                        <span data-translate="Refresh">Refresh</span>
+                    </button>
+                    <button id="export-insights" class="action-btn info">
+                        <i class="fas fa-download"></i>
+                        <span data-translate="Export">Export</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Metrics Overview -->
+            <div class="insights-overview">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value" id="total-games">0</span>
+                        <span class="metric-label" data-translate="Active Games">Active Games</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value" id="total-bookmakers">0</span>
+                        <span class="metric-label" data-translate="Bookmakers">Bookmakers</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value" id="best-opportunities">0</span>
+                        <span class="metric-label" data-translate="Opportunities">Opportunities</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value" id="avg-margin">0%</span>
+                        <span class="metric-label" data-translate="Avg Margin">Avg Margin</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Insights Grid -->
+            <div class="insights-grid">
+                <!-- Market Sentiment Analysis -->
+                <div class="insight-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-chart-pie"></i> <span data-translate="Market Sentiment">Market Sentiment</span></h3>
+                        <div class="panel-status" id="sentiment-status">
+                            <span class="status-dot"></span>
+                            <span data-translate="Analyzing...">Analyzing...</span>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="market-sentiment-chart" class="chart-container"></div>
+                        <div class="sentiment-details">
+                            <div class="sentiment-item">
+                                <span class="sentiment-label" data-translate="Bullish">Bullish</span>
+                                <div class="sentiment-bar">
+                                    <div class="sentiment-fill bullish" id="bullish-percentage"></div>
+                                </div>
+                                <span class="sentiment-value" id="bullish-value">0%</span>
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-label" data-translate="Neutral">Neutral</span>
+                                <div class="sentiment-bar">
+                                    <div class="sentiment-fill neutral" id="neutral-percentage"></div>
+                                </div>
+                                <span class="sentiment-value" id="neutral-value">0%</span>
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-label" data-translate="Bearish">Bearish</span>
+                                <div class="sentiment-bar">
+                                    <div class="sentiment-fill bearish" id="bearish-percentage"></div>
+                                </div>
+                                <span class="sentiment-value" id="bearish-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Betting Opportunities -->
+                <div class="insight-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-gem"></i> <span data-translate="Value Opportunities">Value Opportunities</span></h3>
+                        <div class="panel-controls">
+                            <select id="value-filter" class="mini-select">
+                                <option value="all" data-translate="All Values">All Values</option>
+                                <option value="high" data-translate="High Value">High Value</option>
+                                <option value="medium" data-translate="Medium Value">Medium Value</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="value-opportunities" class="opportunities-list"></div>
+                    </div>
+                </div>
+
+                <!-- Consensus Analysis -->
+                <div class="insight-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-handshake"></i> <span data-translate="Market Consensus">Market Consensus</span></h3>
+                        <div class="consensus-score" id="overall-consensus">
+                            <span class="score-value">0%</span>
+                            <span class="score-label" data-translate="Agreement">Agreement</span>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="consensus-breakdown" class="consensus-list"></div>
+                    </div>
+                </div>
+
+                <!-- Bookmaker Performance -->
+                <div class="insight-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-building"></i> <span data-translate="Bookmaker Analysis">Bookmaker Analysis</span></h3>
+                        <div class="panel-controls">
+                            <select id="bookmaker-metric" class="mini-select">
+                                <option value="odds" data-translate="Best Odds">Best Odds</option>
+                                <option value="coverage" data-translate="Market Coverage">Market Coverage</option>
+                                <option value="competitive" data-translate="Competitiveness">Competitiveness</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="bookmaker-rankings" class="rankings-list"></div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Trends -->
+                <div class="insight-panel full-width">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-activity"></i> <span data-translate="Market Activity">Market Activity</span></h3>
+                        <div class="time-filter">
+                            <button class="time-btn active" data-period="1h">1H</button>
+                            <button class="time-btn" data-period="6h">6H</button>
+                            <button class="time-btn" data-period="24h">24H</button>
+                            <button class="time-btn" data-period="week">1W</button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="activity-timeline" id="market-activity">
+                            <div class="activity-placeholder">
+                                <i class="fas fa-clock"></i>
+                                <p data-translate="Loading market activity...">Loading market activity...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Recommendations -->
+                <div class="insight-panel full-width">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-robot"></i> <span data-translate="AI Recommendations">AI Recommendations</span></h3>
+                        <div class="confidence-indicator">
+                            <span class="confidence-label" data-translate="Confidence">Confidence</span>
+                            <div class="confidence-meter">
+                                <div class="confidence-fill" id="ai-confidence"></div>
+                            </div>
+                            <span class="confidence-value" id="confidence-percentage">0%</span>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="ai-recommendations" class="recommendations-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="trends" class="glass-panel hidden">
+            <h2 data-translate="Market Trends">Market Trends</h2>
+            <div class="trends-container">
+                <div class="trend-chart-container">
+                    <canvas id="odds-trend-chart"></canvas>
+                </div>
+                <div class="trend-stats">
+                    <div class="trend-stat">
+                        <span class="trend-label" data-translate="Odds Movement">Odds Movement</span>
+                        <div id="odds-movement-indicator"></div>
+                    </div>
+                    <div class="trend-stat">
+                        <span class="trend-label" data-translate="Volume Trend">Volume Trend</span>
+                        <div id="volume-trend-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="arbitrage" class="glass-panel hidden">
+            <div class="arbitrage-header-section">
+                <div class="arbitrage-title-area">
+                    <h2><i class="fas fa-arrows-alt-h"></i> Arbitrage Opportunities</h2>
+                    <div class="arbitrage-subtitle">
+                        Real-time detection of risk-free profit opportunities across multiple bookmakers
+                    </div>
+                </div>
+                
+                <div class="arbitrage-controls">
+                    <div class="arbitrage-filters">
+                        <select id="arbitrage-type-filter" class="arbitrage-filter">
+                            <option value="all">All Opportunities</option>
+                            <option value="pure">Pure Arbitrage</option>
+                            <option value="value">Value Bets</option>
+                            <option value="market">Market Analysis</option>
+                        </select>
+                        <select id="arbitrage-market-filter" class="arbitrage-filter">
+                            <option value="all">All Markets</option>
+                            <option value="h2h">Money Line</option>
+                            <option value="spreads">Point Spreads</option>
+                            <option value="totals">Over/Under</option>
+                        </select>
+                        <div>
+                    </div>
+                </div>
+                    <div class="arbitrage-actions">
+                        <button class="arbitrage-btn refresh-btn" onclick="ui.refreshArbitrage()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="arbitrage-btn export-btn" onclick="ui.exportArbitrageData()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arbitrage Statistics Dashboard -->
+            <div class="arbitrage-stats-dashboard">
+                <div class="arbitrage-stat-card">
+                    <div class="stat-icon pure-arb"><i class="fas fa-shield-alt"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="pure-arbitrage-count">0</div>
+                        <div class="stat-label">Pure Arbitrage</div>
+                        <div class="stat-sublabel">Guaranteed Profit</div>
+                    </div>
+                </div>
+                <div class="arbitrage-stat-card">
+                    <div class="stat-icon value-bet"><i class="fas fa-gem"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="value-bet-count">0</div>
+                        <div class="stat-label">Value Bets</div>
+                        <div class="stat-sublabel">High Expected Value</div>
+                    </div>
+                </div>
+                <div class="arbitrage-stat-card">
+                    <div class="stat-icon best-profit"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="best-profit-rate">0.0%</div>
+                        <div class="stat-label">Best Profit</div>
+                        <div class="stat-sublabel">Highest ROI Found</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Efficiency Indicator -->
+            <div class="market-efficiency-section">
+                <h3><i class="fas fa-tachometer-alt"></i> Market Efficiency Analysis</h3>
+                <div class="efficiency-grid">
+                    <div class="efficiency-metric">
+                        <div class="efficiency-label">Market Efficiency Score</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-progress" id="market-efficiency-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="efficiency-value" id="market-efficiency-score">0%</div>
+                    </div>
+                    <div class="efficiency-info">
+                        <div class="efficiency-description" id="efficiency-description">
+                            Analyzing market data to determine arbitrage potential...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opportunities List -->
+            <div class="arbitrage-opportunities-section">
+                <div class="opportunities-header">
+                    <h3><i class="fas fa-list"></i> Current Opportunities</h3>
+                    <div class="sort-options">
+                        <label>Sort by:</label>
+                        <select id="arbitrage-sort" class="sort-select">
+                            <option value="profit-desc">Profit (High to Low)</option>
+                            <option value="profit-asc">Profit (Low to High)</option>
+                            <option value="risk-asc">Risk (Low to High)</option>
+                            <option value="time">Most Recent</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="arbitrage-opportunities" class="opportunities-container">
+                    <div class="loading-opportunities">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Scanning for arbitrage opportunities...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arbitrage Calculator Modal Trigger -->
+            <div class="arbitrage-help-section">
+                <div class="help-card">
+                    <div class="help-content">
+                        <h4><i class="fas fa-question-circle"></i> How Arbitrage Works</h4>
+                        <p>Arbitrage betting involves placing bets on all possible outcomes of an event with different bookmakers to guarantee a profit regardless of the result.</p>
+                        <button class="learn-more-btn" onclick="ui.showArbitrageGuide()">
+                            <i class="fas fa-book"></i> Learn More
+                        </button>
+                    </div>
+                    <div class="help-visual">
+                        <div class="arbitrage-example">
+                            <div class="example-title">Example:</div>
+                            <div class="example-bets">
+                                <div class="example-bet bet-a">
+                                    <span>Team A @ 2.10</span>
+                                    <span>$476.19</span>
+                                </div>
+                                <div class="example-bet bet-b">
+                                    <span>Team B @ 2.05</span>
+                                    <span>$487.80</span>
+                                </div>
+                                <div class="example-profit">
+                                    <span>Guaranteed Profit: $36.01 (3.7%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section id="info" class="glass-panel hidden">
+        <div class="stats-documentation">
+            <div class="documentation-header">
+                <h2><i class="fas fa-graduation-cap"></i> Understanding the Stats</h2>
+                <p class="documentation-subtitle">Comprehensive guide to all statistics, calculations, and features in the NFL Odds Analyzer</p>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="toc-section">
+                <h3><i class="fas fa-list"></i> Table of Contents</h3>
+                <div class="toc-grid">
+                    <a href="#basic-stats" class="toc-link">1. Basic Statistics</a>
+                    <a href="#probability-calcs" class="toc-link">2. Probability Calculations</a>
+                    <a href="#market-analysis" class="toc-link">3. Market Analysis</a>
+                    <a href="#value-betting" class="toc-link">4. Value Betting</a>
+                    <a href="#arbitrage" class="toc-link">5. Arbitrage Opportunities</a>
+                    <a href="#consensus" class="toc-link">6. Market Consensus</a>
+                    <a href="#trends" class="toc-link">7. Trend Analysis</a>
+                    <a href="#ai-features" class="toc-link">8. AI Features</a>
+                    <a href="#api-system" class="toc-link">9. API & Data System</a>
+                    <a href="#performance" class="toc-link">10. Performance Metrics</a>
+                </div>
+            </div>
+
+            <!-- Basic Statistics -->
+            <div class="stats-section" id="basic-stats">
+                <h3><i class="fas fa-chart-bar"></i> Basic Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-explanation">
+                        <h4><i class="fas fa-percent"></i> Implied Probability</h4>
+                        <div class="formula-box">
+                            <strong>Formula:</strong> Probability = 1 / Decimal Odds × 100%
+                        </div>
+                        <p><strong>Explanation:</strong> Converts betting odds into percentage probability. For example, odds of 2.00 = 50% probability.</p>
+                        <div class="example-box">
+                            <strong>Example:</strong> Odds 1.80 → Probability = 1/1.80 × 100% = 55.56%
+                        </div>
+                    </div>
+                    
+                    <div class="stat-explanation">
+                        <h4><i class="fas fa-balance-scale"></i> Average Odds</h4>
+                        <div class="formula-box">
+                            <strong>Formula:</strong> Avg = Σ(Odds × Weight) / Σ(Weight)
+                        </div>
+                        <p><strong>Explanation:</strong> Weighted average across all bookmakers, giving more weight to reputable sources and larger market makers.</p>
+                        <div class="weight-info">
+                            <strong>Weights:</strong> Tier 1 bookmakers (1.0), Tier 2 (0.8), Tier 3 (0.6)
+                        </div>
+                    </div>
+                    
+                    <div class="stat-explanation">
+                        <h4><i class="fas fa-users"></i> Bookmaker Count</h4>
+                        <p><strong>Explanation:</strong> Number of bookmakers offering odds for each outcome. Higher count indicates:</p>
+                        <ul>
+                            <li>Greater market confidence</li>
+                            <li>More reliable average odds</li>
+                            <li>Better arbitrage potential</li>
+                            <li>Increased data accuracy</li>
+                        </ul>
+                    </div>
+
+                    <div class="stat-explanation">
+                        <h4><i class="fas fa-chart-line"></i> Market Movement</h4>
+                        <div class="formula-box">
+                            <strong>Formula:</strong> Movement = (Current Odds - Opening Odds) / Opening Odds × 100%
+                        </div>
+                        <p><strong>Explanation:</strong> Percentage change in odds from opening to current. Positive values indicate odds lengthening (outcome less likely).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Probability Calculations -->
+            <div class="stats-section" id="probability-calcs">
+                <h3><i class="fas fa-calculator"></i> Advanced Probability Calculations</h3>
+                <div class="calculation-details">
+                    <div class="calc-method">
+                        <h4><i class="fas fa-brain"></i> True Probability Estimation</h4>
+                        <div class="multi-step-formula">
+                            <div class="step">
+                                <strong>Step 1:</strong> Remove bookmaker margin (overround)
+                            </div>
+                            <div class="step">
+                                <strong>Step 2:</strong> Calculate fair odds: Fair Odds = Implied Prob / (Sum of all Implied Probs - 1)
+                            </div>
+                            <div class="step">
+                                <strong>Step 3:</strong> Apply market efficiency corrections
+                            </div>
+                        </div>
+                        <p><strong>Purpose:</strong> Provides more accurate probability estimates by removing bookmaker profit margins.</p>
+                    </div>
+
+                    <div class="calc-method">
+                        <h4><i class="fas fa-wave-square"></i> Variance Analysis</h4>
+                        <div class="formula-box">
+                            <strong>Variance:</strong> σ² = Σ(Xi - μ)² / N
+                        </div>
+                        <p><strong>Application:</strong> Measures odds volatility across bookmakers. High variance indicates disagreement in the market.</p>
+                        <div class="variance-interpretation">
+                            <strong>Interpretation:</strong>
+                            <ul>
+                                <li>Low Variance (< 0.1): Strong market consensus</li>
+                                <li>Medium Variance (0.1-0.3): Moderate disagreement</li>
+                                <li>High Variance (> 0.3): Significant market uncertainty</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Analysis -->
+            <div class="stats-section" id="market-analysis">
+                <h3><i class="fas fa-chart-pie"></i> Market Analysis Features</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-feature">
+                        <h4><i class="fas fa-thermometer-half"></i> Market Sentiment</h4>
+                        <p><strong>Calculation:</strong> Analyzes odds distribution to determine market bias:</p>
+                        <div class="sentiment-breakdown">
+                            <div class="sentiment-item">
+                                <span class="sentiment-bull">🟢 Bullish:</span> Favorites heavily backed (probability > 60%)
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-neutral">🟡 Neutral:</span> Balanced market (probability 40-60%)
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-bear">🔴 Bearish:</span> Underdogs favored (probability < 40%)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-feature">
+                        <h4><i class="fas fa-trophy"></i> Home Field Advantage</h4>
+                        <div class="formula-box">
+                            <strong>HFA Index:</strong> (Home Win Prob - 50%) × 2
+                        </div>
+                        <p><strong>Analysis:</strong> Quantifies home team betting advantage. NFL average is typically 3-7 points.</p>
+                    </div>
+
+                    <div class="analysis-feature">
+                        <h4><i class="fas fa-clock"></i> Time-Based Analysis</h4>
+                        <p><strong>Features:</strong></p>
+                        <ul>
+                            <li>Odds movement over time</li>
+                            <li>Volume-weighted price changes</li>
+                            <li>Sharp vs. public money indicators</li>
+                            <li>Closing line value analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Value Betting -->
+            <div class="stats-section" id="value-betting">
+                <h3><i class="fas fa-gem"></i> Value Betting System</h3>
+                <div class="value-system">
+                    <div class="value-calculation">
+                        <h4><i class="fas fa-formula"></i> Value Score Calculation</h4>
+                        <div class="multi-step-formula">
+                            <div class="step">
+                                <strong>Expected Value:</strong> EV = (True Probability × Odds) - 1
+                            </div>
+                            <div class="step">
+                                <strong>Kelly Criterion:</strong> Bet Size = (bp - q) / b
+                                <ul>
+                                    <li>b = odds - 1</li>
+                                    <li>p = true probability</li>
+                                    <li>q = probability of losing (1-p)</li>
+                                </ul>
+                            </div>
+                            <div class="step">
+                                <strong>Value Score:</strong> Normalized EV × Confidence Factor × Liquidity Weight
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="value-interpretation">
+                        <h4><i class="fas fa-star"></i> Value Ratings</h4>
+                        <div class="rating-system">
+                            <div class="rating-tier excellent">
+                                <strong>⭐⭐⭐⭐⭐ Excellent (90-100%):</strong> Significant edge, high confidence
+                            </div>
+                            <div class="rating-tier good">
+                                <strong>⭐⭐⭐⭐ Good (70-89%):</strong> Clear value, moderate confidence
+                            </div>
+                            <div class="rating-tier fair">
+                                <strong>⭐⭐⭐ Fair (50-69%):</strong> Slight edge, lower confidence
+                            </div>
+                            <div class="rating-tier poor">
+                                <strong>⭐⭐ Poor (30-49%):</strong> Marginal value, high risk
+                            </div>
+                            <div class="rating-tier avoid">
+                                <strong>⭐ Avoid (0-29%):</strong> No value, negative expected return
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arbitrage -->
+            <div class="stats-section" id="arbitrage">
+                <h3><i class="fas fa-arrows-alt-h"></i> Arbitrage Detection System</h3>
+                <div class="arbitrage-system">
+                    <div class="arb-detection">
+                        <h4><i class="fas fa-search"></i> Detection Algorithm</h4>
+                        <div class="formula-box">
+                            <strong>Arbitrage Check:</strong> 1/Odds_A + 1/Odds_B < 1.0
+                        </div>
+                        <p><strong>Process:</strong></p>
+                        <ol>
+                            <li>Compare all bookmaker odds for same event</li>
+                            <li>Find highest odds for each outcome</li>
+                            <li>Calculate inverse sum of probabilities</li>
+                            <li>If sum < 1.0, arbitrage opportunity exists</li>
+                        </ol>
+                    </div>
+
+                    <div class="arb-calculation">
+                        <h4><i class="fas fa-percentage"></i> Profit Calculation</h4>
+                        <div class="multi-step-formula">
+                            <div class="step">
+                                <strong>Profit Margin:</strong> (1 - (1/Odds_A + 1/Odds_B)) × 100%
+                            </div>
+                            <div class="step">
+                                <strong>Bet Sizing:</strong>
+                                <ul>
+                                    <li>Bet_A = Total_Stake × (1/Odds_A) / (1/Odds_A + 1/Odds_B)</li>
+                                    <li>Bet_B = Total_Stake × (1/Odds_B) / (1/Odds_A + 1/Odds_B)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="risk-warning">
+                            <strong>⚠️ Risk Factors:</strong> Account limits, odds changes, betting rules differences
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consensus -->
+            <div class="stats-section" id="consensus">
+                <h3><i class="fas fa-handshake"></i> Market Consensus Analysis</h3>
+                <div class="consensus-system">
+                    <div class="consensus-calculation">
+                        <h4><i class="fas fa-chart-area"></i> Consensus Score</h4>
+                        <div class="formula-box">
+                            <strong>Consensus:</strong> 100% - (Standard Deviation / Mean × 100%)
+                        </div>
+                        <p><strong>Interpretation:</strong></p>
+                        <div class="consensus-levels">
+                            <div class="consensus-level high">
+                                <strong>High Consensus (80-100%):</strong> Strong market agreement, reliable odds
+                            </div>
+                            <div class="consensus-level medium">
+                                <strong>Medium Consensus (50-79%):</strong> Moderate agreement, some uncertainty
+                            </div>
+                            <div class="consensus-level low">
+                                <strong>Low Consensus (0-49%):</strong> Market disagreement, potential opportunity
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="consensus-factors">
+                        <h4><i class="fas fa-cogs"></i> Influencing Factors</h4>
+                        <ul>
+                            <li><strong>Information Asymmetry:</strong> Different bookmakers may have different information</li>
+                            <li><strong>Risk Management:</strong> Bookmakers adjust odds based on their exposure</li>
+                            <li><strong>Market Timing:</strong> Updates may occur at different times</li>
+                            <li><strong>Customer Base:</strong> Different betting patterns influence odds</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trends -->
+            <div class="stats-section" id="trends">
+                <h3><i class="fas fa-trending-up"></i> Trend Analysis Engine</h3>
+                <div class="trends-system">
+                    <div class="trend-detection">
+                        <h4><i class="fas fa-chart-line"></i> Movement Detection</h4>
+                        <p><strong>Algorithms Used:</strong></p>
+                        <ul>
+                            <li><strong>Moving Averages:</strong> 5, 15, 30-minute intervals</li>
+                            <li><strong>Momentum Indicators:</strong> Rate of change analysis</li>
+                            <li><strong>Volume Analysis:</strong> Bet volume correlation with price movement</li>
+                            <li><strong>Breakout Detection:</strong> Significant deviation from normal range</li>
+                        </ul>
+                    </div>
+
+                    <div class="trend-signals">
+                        <h4><i class="fas fa-signal"></i> Signal Classification</h4>
+                        <div class="signal-types">
+                            <div class="signal-type bullish">
+                                <strong>🟢 Bullish Signals:</strong> Odds shortening, increasing volume, positive momentum
+                            </div>
+                            <div class="signal-type bearish">
+                                <strong>🔴 Bearish Signals:</strong> Odds lengthening, decreasing confidence, negative momentum
+                            </div>
+                            <div class="signal-type neutral">
+                                <strong>🟡 Neutral Signals:</strong> Sideways movement, low volatility, stable volume
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features -->
+            <div class="stats-section" id="ai-features">
+                <h3><i class="fas fa-robot"></i> AI-Powered Features</h3>
+                <div class="ai-system">
+                    <div class="ai-recommendations">
+                        <h4><i class="fas fa-lightbulb"></i> Smart Recommendations</h4>
+                        <p><strong>AI Models Used:</strong></p>
+                        <ul>
+                            <li><strong>Pattern Recognition:</strong> Identifies recurring market patterns</li>
+                            <li><strong>Anomaly Detection:</strong> Flags unusual odds movements</li>
+                            <li><strong>Predictive Modeling:</strong> Forecasts likely outcomes based on historical data</li>
+                            <li><strong>Sentiment Analysis:</strong> Interprets market sentiment from betting patterns</li>
+                        </ul>
+                    </div>
+
+                    <div class="ai-confidence">
+                        <h4><i class="fas fa-brain"></i> Confidence Scoring</h4>
+                        <div class="formula-box">
+                            <strong>Confidence:</strong> Weighted average of model certainty, data quality, and historical accuracy
+                        </div>
+                        <div class="confidence-factors">
+                            <strong>Factors:</strong>
+                            <ul>
+                                <li>Historical model performance (40%)</li>
+                                <li>Data completeness and quality (30%)</li>
+                                <li>Market consistency indicators (20%)</li>
+                                <li>External validation signals (10%)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API & Data System -->
+            <div class="stats-section" id="api-system">
+                <h3><i class="fas fa-database"></i> API & Data Management</h3>
+                <div class="api-system">
+                    <div class="data-sources">
+                        <h4><i class="fas fa-cloud-download-alt"></i> Data Sources & Quality</h4>
+                        <div class="source-hierarchy">
+                            <div class="source-tier tier-1">
+                                <strong>Tier 1 Sources:</strong> Primary sportsbooks with high volume and reliability
+                            </div>
+                            <div class="source-tier tier-2">
+                                <strong>Tier 2 Sources:</strong> Secondary bookmakers with good reputation
+                            </div>
+                            <div class="source-tier tier-3">
+                                <strong>Tier 3 Sources:</strong> Additional sources for market coverage
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="update-system">
+                        <h4><i class="fas fa-sync"></i> Automatic Update System</h4>
+                        <div class="update-details">
+                            <div class="update-schedule">
+                                <strong>📅 Update Schedule:</strong>
+                                <ul>
+                                    <li>Automatic updates every 3 hours</li>
+                                    <li>Maximum 450 API calls per month</li>
+                                    <li>Smart caching to minimize API usage</li>
+                                    <li>Rate limiting: 1 call per hour for manual refreshes</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="cache-strategy">
+                                <strong>💾 Caching Strategy:</strong>
+                                <ul>
+                                    <li>Firebase Firestore for persistent storage</li>
+                                    <li>Local browser cache for immediate access</li>
+                                    <li>Intelligent cache invalidation based on data age</li>
+                                    <li>Protected cache system prevents unauthorized clearing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="stats-section" id="performance">
+                <h3><i class="fas fa-tachometer-alt"></i> Performance & System Metrics</h3>
+                <div class="performance-system">
+                    <div class="system-health">
+                        <h4><i class="fas fa-heartbeat"></i> System Health Score</h4>
+                        <div class="formula-box">
+                            <strong>Health Score:</strong> Weighted average of subsystem performance
+                        </div>
+                        <div class="health-components">
+                            <strong>Components (100 points total):</strong>
+                            <ul>
+                                <li>Firebase Connection Health (25 points)</li>
+                                <li>API Response Performance (25 points)</li>
+                                <li>Cache Efficiency (25 points)</li>
+                                <li>Data Quality Score (25 points)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="monitoring-metrics">
+                        <h4><i class="fas fa-chart-bar"></i> Key Performance Indicators</h4>
+                        <div class="metrics-grid">
+                            <div class="metric-category">
+                                <strong>📊 API Metrics:</strong>
+                                <ul>
+                                    <li>Monthly usage vs. 450 call limit</li>
+                                    <li>Average response time</li>
+                                    <li>Success rate percentage</li>
+                                    <li>Rate limit adherence</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="metric-category">
+                                <strong>🔒 Security Metrics:</strong>
+                                <ul>
+                                    <li>Cache protection events</li>
+                                    <li>Unauthorized access attempts</li>
+                                    <li>Data integrity checks</li>
+                                    <li>Firebase security status</li>
+                                </ul>
+                            </div>
+
+                            <div class="metric-category">
+                                <strong>⚡ Performance Metrics:</strong>
+                                <ul>
+                                    <li>Page load time</li>
+                                    <li>Memory usage</li>
+                                    <li>Cache hit ratio</li>
+                                    <li>Real-time update latency</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="documentation-footer">
+                <div class="footer-note">
+                    <p><strong>📝 Note:</strong> All calculations and algorithms are continuously refined based on market feedback and performance data. The system prioritizes accuracy, efficiency, and user experience while maintaining strict data quality standards.</p>
+                </div>
+                <div class="update-info">
+                    <p><strong>🔄 Last Updated:</strong> September 8, 2025 | <strong>Version:</strong> 2.1.0</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="loading" class="loading-overlay glass-panel hidden">
+        <div class="spinner"></div>
+        <p data-translate="Loading data...">Loading data...</p>
+    </div>
+
+    <!-- Firebase SDK v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Chart.js for trend charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/smart-update.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
